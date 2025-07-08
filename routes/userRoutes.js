@@ -4,28 +4,60 @@ import User from '../models/user.js';
 import {jwtAuthMiddleware, generateToken} from '../jwt.js' 
 
 
-// POST route to add a user i.e. a voter/admin
-router.post('/signup', async (req, res) =>{
-    try{
-        const data = req.body // Assuming the request body contains the User data
+// POST new user that is to signup a new user
+router.post('/signup', async (req, res) => {
+    try {
 
-        // create a new User document using the Mongoose model
-        const newUser = new User(data);
+        // Create a new user object(newUser) of User type document using Mongoose model
+        const newUser = new User(req.body); //req.body: contains the data entered by the users
 
-        // Save the new person to the database
-        const response = await newUser.save();
-        console.log('data saved');
+        // save the new user to the database and can be accessed by response
+        const response = await newUser.save(); 
+        
+        const payload ={ // payload is created to store user id, username as user data 
+            id: response.id,
+            username: response.username
+        }
+        console.log(JSON.stringify(payload)); // logs the payload which contains user data: id, username in console just for testing
+        
+        // add the payload inside the generated token 
+        // the generated token in jwt.js is stored inside a const variable 'token'
+        const token =generateToken(payload);
 
-        // const payload =(
-        //     id: response.id
-        // )
-        console.log(JSON.stringify(payload));
-        const token = generateToken(payload);
-        console.log("Toke");
-    }catch(err){
-        res.status(500).json({error: 'Tnternal Server Error'});
+        res.status(200).json({response: response, token: token});
+    } catch (err) {
+        res.status(400).json({ message: err.message });
     }
-} );
+});
+
+// Login Route
+router.post('/login', async(req, res)=>{
+    try{
+        // Extract username and password from request body
+        const {username, password} = req.body;
+
+        // Find the user by username
+        const user = await User.findOne({username: username});
+
+        // If user does not exist or password does not match, return error
+        if( !user || !(await user.comparePassword(password))){
+            return res.status(401).json({error: 'Invalid username or password!'});  
+        } 
+
+        // genrate Token 
+        const payload ={
+            id: user.id,
+            username: user.username
+        }
+        const token = generateToken(payload);
+
+    }catch(err){
+        console.log(err);
+        res.status(500).json({error: 'Internal Server Error!'});
+    }
+
+});
+
 
 
 // // GET all employees
