@@ -15,8 +15,7 @@ router.post('/signup', async (req, res) => {
         const response = await newUser.save(); 
         
         const payload ={ // payload is created to store user id, username as user data 
-            id: response.id,
-            username: response.username
+            id: response.id
         }
         console.log(JSON.stringify(payload)); // logs the payload which contains user data: id, username in console just for testing
         
@@ -34,20 +33,19 @@ router.post('/signup', async (req, res) => {
 router.post('/login', async(req, res)=>{
     try{
         // Extract username and password from request body
-        const {username, password} = req.body;
+        const {aadharCardNumber, password} = req.body;
 
         // Find the user by username
-        const user = await User.findOne({username: username});
+        const user = await User.findOne({aadharCardNumber: aadharCardNumber});
 
         // If user does not exist or password does not match, return error
         if( !user || !(await user.comparePassword(password))){
-            return res.status(401).json({error: 'Invalid username or password!'});  
+            return res.status(401).json({error: 'Invalid aadharCardNumber or password!'});  
         } 
 
         // genrate Token 
         const payload ={
-            id: user.id,
-            username: user.username
+            id: user.id
         }
         const token = generateToken(payload);
 
@@ -60,72 +58,6 @@ router.post('/login', async(req, res)=>{
 
 
 
-// // GET all employees
-// router.get('/', async (req, res) => {
-//     try {
-//         const employees = await Employees.find();
-//         res.status(200).json(employees);
-//     } catch (err) {
-//         res.status(500).json({ message: err.message });
-//     }
-// });
 
-// // GET employee by ID
-// router.get('/id/:id', async (req, res) => {
-//     try {
-//         const employee = await Employees.findById(req.params.id);
-//         if (!employee) return res.status(404).json({ message: 'Employee not found' });
-//         res.json(employee);
-//     } catch (err) {
-//         res.status(500).json({ message: err.message });
-//     }
-// });
-
-// // GET employees by work
-// router.get('/work/:work', async (req, res) => {
-//     try {
-//         const employees = await Employees.find({ work: req.params.work.toLowerCase() });
-//         res.json(employees);
-//     } catch (err) {
-//         res.status(500).json({ message: err.message });
-//     }
-// });
-
-// // POST new employee
-// router.post('/', async (req, res) => {
-//     try {
-//         const newEmp = new Employees(req.body);
-//         await newEmp.save();
-//         res.status(201).json(newEmp);
-//     } catch (err) {
-//         res.status(400).json({ message: err.message });
-//     }
-// });
-
-// // PUT update employee by ID
-// router.put('/:id', async (req, res) => {
-//     try {
-//         const updatedEmp = await Employees.findByIdAndUpdate(
-//             req.params.id,
-//             req.body,
-//             { new: true, runValidators: true }
-//         );
-//         if (!updatedEmp) return res.status(404).json({ message: 'Employee not found' });
-//         res.json(updatedEmp);
-//     } catch (err) {
-//         res.status(400).json({ message: err.message });
-//     }
-// });
-
-// // DELETE employee by ID
-// router.delete('/:id', async (req, res) => {
-//     try {
-//         const deletedEmp = await Employees.findByIdAndDelete(req.params.id);
-//         if (!deletedEmp) return res.status(404).json({ message: 'Employee not found' });
-//         res.json({ message: 'Employee deleted successfully' });
-//     } catch (err) {
-//         res.status(500).json({ message: err.message });
-//     }
-// });
 
 export default router;
