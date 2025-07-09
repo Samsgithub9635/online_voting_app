@@ -72,7 +72,7 @@ router.post('/login', async(req, res)=>{
 
 
 // Profile password changing route
-router.put('/profile/password', async (req, res) =>{
+router.put('/profile/password', jwtAuthMiddleware, async (req, res) =>{
     try{
 
         const userId = req.user.id; // Extract the id from the token
