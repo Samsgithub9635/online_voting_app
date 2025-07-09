@@ -8,7 +8,7 @@ const mongoURL = process.env.MongoDB_Compass_URL;
 async function connectDB() {
   try {
     await mongoose.connect(mongoURL);
-    console.log('✅ Connected to MongoDB Atlas');
+    console.log('✅ Connected to MongoDB Local url!');
   } catch (err) {
     console.error('❌ MongoDB connection error:', err);
   }
