@@ -1,6 +1,7 @@
 import express from 'express';
 const app = express();
-// require('dotenv').config();
+import dotenv from 'dotenv';
+dotenv.config();
 
 import bodyParser from 'body-parser';
 app.use(bodyParser.json()); //req.body
