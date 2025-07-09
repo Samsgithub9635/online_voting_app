@@ -53,8 +53,22 @@ router.post('/login', async(req, res)=>{
         console.log(err);
         res.status(500).json({error: 'Internal Server Error!'});
     }
-
 });
+
+// Profile Route this is a protected route (jwtAuthMiddleware) used
+ router.get('/profile', jwtAuthMiddleware, async (req, res) =>{
+    try{
+        const userData = req.user; // comes from line num 14 in jwt.js //extracts user data from payload
+        const userId = userData.id; // this id is extracted from the payload
+        const user = await User.findById(userId);
+
+        res.status(200).json({user});
+
+    }catch(err){
+        console.log(err);
+        res.status(500).json({error: 'Internal Server Error!'});
+    }
+ });
 
 
 
