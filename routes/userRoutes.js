@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { response } from 'express';
 const router = express.Router();
 import User from '../models/user.js'; 
 import {jwtAuthMiddleware, generateToken} from '../jwt.js' 
@@ -69,6 +69,35 @@ router.post('/login', async(req, res)=>{
         res.status(500).json({error: 'Internal Server Error!'});
     }
  });
+
+
+// Profile password changing route
+router.put('/profile/password', async (req, res) =>{
+    try{
+
+        const userId = req.user.id; // Extract the id from the token
+        const {currentPassword, newPassword} = req.body; // fetch the current password and new password from the client side/postman reqest body 
+
+        //find the user by userId
+        const user = await User.findById(userId);
+
+        // if password does not match, return error
+        if(!(await user.comparePassword(currentPassword))){
+            return res.status(401).json({error: 'Incorrect current password!!!'});
+        }
+
+        // Update the user's password
+        user.password = newPassword;
+        await user.save();
+
+        console.log('Password Updated successfully');
+        res.status(200).json({message: "password updated"});
+
+    }catch(err){
+        console.log(err);
+        res.status(500).json({error: 'Internal Server Error!'});
+    }
+})
 
 
 
