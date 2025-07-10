@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import bodyParser from 'body-parser';
 import mongoose from './db.js'; // connects and exports mongoose.connection
 import userRoutes from './routes/userRoutes.js';
+import candidateRoutes from './routes/candidateRoutes.js';
 
 dotenv.config();
 const app = express();
@@ -17,6 +18,7 @@ const logRequest = (req, res, next) => {
 app.use(logRequest);
 
 app.use('/user', userRoutes);
+app.use('/candidate', candidateRoutes);
 
 // ✅ Wait for DB connection before starting server
 mongoose.once('open', () => {
