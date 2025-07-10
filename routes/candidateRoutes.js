@@ -4,6 +4,45 @@ import candidate from '../models/candidate.js';
 import {jwtAuthMiddleware, generateToken} from '../jwt.js'; 
 
 
+// POST route to add a candidate
+router.post('/', async (req, res) => {
+    try {
+        // Create a new candidate object(newcandidate) of candidate type document using Mongoose model
+        const newCandidate = new candidate(req.body); //req.body: contains the data entered by the candidates
+
+        // save the new candidate to the database and can be accessed by response
+        const response = await newCandidate.save(); 
+        console.log('Candidate data saved!');
+
+        res.status(200).json({response: response});
+    } catch (err) {
+        res.status(400).json({ message: err.message });
+    }
+});
+
+// Login Route
+router.post('/login', async(req, res)=>{
+    try{
+        const {aadharCardNumber, password} = req.body;
+        const candidate = await candidate.findOne({aadharCardNumber: aadharCardNumber});
+
+        if(!candidate || !(await candidate.comparePassword(password))){
+            return res.status(401).json({error: 'Invalid aadharCardNumber or password!'});  
+        }
+
+        const payload ={
+            id: candidate.id
+        };
+        const token = generateToken(payload);
+
+        res.status(200).json({ token: token });
+
+    }catch(err){
+        console.log(err);
+        res.status(500).json({error: 'Internal Server Error!'});
+    }
+});
+
 // Profile Route this is a protected route (jwtAuthMiddleware) used
 router.get('/profile', jwtAuthMiddleware, async (req, res) =>{
     try{
