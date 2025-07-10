@@ -3,9 +3,12 @@ const app = express();
 import dotenv from 'dotenv';
 dotenv.config();
 
+
 import bodyParser from 'body-parser';
 app.use(bodyParser.json()); //req.body
 const PORT = process.env.PORT || 3000;
+
+app.use(logRequest);
 
 // importing route files
 import userRoutes from './routes/userRoutes.js';
