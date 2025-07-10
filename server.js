@@ -19,7 +19,7 @@ const logRequest = (req, res, next) => {
 app.use(logRequest);
 
 app.use('/user', userRoutes);
-app.use('/candidate',jwtAuthMiddleware, candidateRoutes);
+app.use('/candidate',jwtAuthMiddleware, candidateRoutes); //added middleware to all candidate routes so that all routes are protected so that only admin can access
 
 // ✅ Wait for DB connection before starting server
 mongoose.once('open', () => {
