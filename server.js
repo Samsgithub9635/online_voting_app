@@ -4,6 +4,7 @@ import bodyParser from 'body-parser';
 import mongoose from './db.js'; // connects and exports mongoose.connection
 import userRoutes from './routes/userRoutes.js';
 import candidateRoutes from './routes/candidateRoutes.js';
+import { jwtAuthMiddleware } from './jwt.js';
 
 dotenv.config();
 const app = express();
@@ -18,7 +19,7 @@ const logRequest = (req, res, next) => {
 app.use(logRequest);
 
 app.use('/user', userRoutes);
-app.use('/candidate', candidateRoutes);
+app.use('/candidate',jwtAuthMiddleware, candidateRoutes);
 
 // ✅ Wait for DB connection before starting server
 mongoose.once('open', () => {
