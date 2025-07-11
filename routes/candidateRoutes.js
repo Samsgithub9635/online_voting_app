@@ -22,7 +22,7 @@ router.post('/',jwtAuthMiddleware, async (req, res) => { //added middleware to a
             return res.status(403).json({message: "User role is not equal to 'admin'!"})
         }
         // Create a new candidate object(newcandidate) of candidate type document using Mongoose model
-        const newCandidate = new Candidateandidate(req.body); //req.body: contains the data entered by the candidates
+        const newCandidate = new Candidate(req.body); //req.body: contains the data entered by the candidates
 
         // save the new candidate to the database and can be accessed by response
         const response = await newCandidate.save(); 
