@@ -34,20 +34,6 @@ router.post('/', async (req, res) => {
 });
 
 
-// Profile Route this is a protected route (jwtAuthMiddleware) used
-router.get('/profile', jwtAuthMiddleware, async (req, res) =>{
-    try{
-        const candidateData = req.candidate; // comes from line num 14 in jwt.js //extracts candidate data from payload
-        const candidateId = candidateData.id; // this id is extracted from the payload
-        const candidate = await candidate.findById(candidateId);
-
-        res.status(200).json({candidate});
-
-    }catch(err){
-        console.log(err);
-        res.status(500).json({error: 'Internal Server Error!'});
-    }
-});
 
 // Profile password changing route
 router.put('/profile/password', jwtAuthMiddleware, async (req, res) =>{
