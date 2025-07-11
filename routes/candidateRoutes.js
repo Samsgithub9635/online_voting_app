@@ -1,12 +1,25 @@
 import express, { response } from 'express';
 const router = express.Router();
 import candidate from '../models/candidate.js'; 
+import User from '../models/user.js';
 
+const checkAdminRole = async (userID) =>{
+    try{
+        const user = await User.findById(userID);
+        return user.role === 'admin';
 
+    }catch(err){
+        return false;
+    }
+}
 
 // POST route to add a candidate
 router.post('/', async (req, res) => {
     try {
+
+        if(!checkAdminRole){
+            return res.status(404).json({message: "User role is not equal to 'admin'!"})
+        }
         // Create a new candidate object(newcandidate) of candidate type document using Mongoose model
         const newCandidate = new candidate(req.body); //req.body: contains the data entered by the candidates
 
