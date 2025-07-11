@@ -2,6 +2,7 @@ import express, { response } from 'express';
 const router = express.Router();
 import candidate from '../models/candidate.js'; 
 import User from '../models/user.js';
+import { jwtAuthMiddleware } from '../jwt.js';
 
 const checkAdminRole = async (userID) =>{
     try{
@@ -14,7 +15,7 @@ const checkAdminRole = async (userID) =>{
 }
 
 // POST route to add a candidate
-router.post('/', async (req, res) => {
+router.post('/',jwtAuthMiddleware, async (req, res) => { //added middleware to all candidate routes so that all routes are protected, only Role="admin" can access
     try {
 
         if(!checkAdminRole){
@@ -34,7 +35,7 @@ router.post('/', async (req, res) => {
 });
 
 // Profile password changing route
-router.put('/:candidateID', async (req, res) =>{
+router.put('/:candidateID',jwtAuthMiddleware, async (req, res) =>{ //added middleware to all candidate routes so that all routes are protected, only Role="admin" can access
     try{
 
         if(!checkAdminRole(req.user.id)){
@@ -63,7 +64,7 @@ router.put('/:candidateID', async (req, res) =>{
 });
 
 // Profile password changing route
-router.delete('/:candidateID', async (req, res) =>{
+router.delete('/:candidateID',jwtAuthMiddleware,  async (req, res) =>{ //added middleware to all candidate routes so that all routes are protected, only Role="admin" can access
     try{
 
         if(!checkAdminRole(req.user.id)){
