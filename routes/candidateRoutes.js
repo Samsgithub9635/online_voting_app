@@ -1,6 +1,6 @@
 import express, { response } from 'express';
 const router = express.Router();
-import candidate from '../models/candidate.js'; 
+import Candidate from '../models/candidate.js'; 
 import User from '../models/user.js';
 import { jwtAuthMiddleware } from '../jwt.js';
 
@@ -22,7 +22,7 @@ router.post('/',jwtAuthMiddleware, async (req, res) => { //added middleware to a
             return res.status(403).json({message: "User role is not equal to 'admin'!"})
         }
         // Create a new candidate object(newcandidate) of candidate type document using Mongoose model
-        const newCandidate = new candidate(req.body); //req.body: contains the data entered by the candidates
+        const newCandidate = new Candidateandidate(req.body); //req.body: contains the data entered by the candidates
 
         // save the new candidate to the database and can be accessed by response
         const response = await newCandidate.save(); 
@@ -45,7 +45,7 @@ router.put('/:candidateID',jwtAuthMiddleware, async (req, res) =>{ //added middl
         const candidateID = req.params.candidateID; // Extract the id from the URL parameter
         const updatedCandidateData = req.body;
 
-        const response = await candidate.findByIdAndUpdate(candidateID, updatedCandidateData, {
+        const response = await Candidate.findByIdAndUpdate(candidateID, updatedCandidateData, {
             new: true, //Return the updated document
             runBalidators: true, // Run Mongoose validation
         });
@@ -72,7 +72,7 @@ router.delete('/:candidateID',jwtAuthMiddleware,  async (req, res) =>{ //added m
         }
 
         const candidateID = req.params.candidateID; // Extract the id from the URL parameter
-        const response = await candidate.findByIdAndDelete(candidateID);
+        const response = await Candidate.findByIdAndDelete(candidateID);
        
         if(!response) {
             return res.status(404).json({error: 'Candidate not found!!!'});
