@@ -1,7 +1,7 @@
 import express, { response } from 'express';
 const router = express.Router();
 import candidate from '../models/candidate.js'; 
-import {jwtAuthMiddleware, generateToken} from '../jwt.js'; 
+
 
 
 // POST route to add a candidate
