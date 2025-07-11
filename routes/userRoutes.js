@@ -3,10 +3,31 @@ const router = express.Router();
 import User from '../models/user.js'; 
 import {jwtAuthMiddleware, generateToken} from '../jwt.js'; 
 
+const isAdminPresent = async () => { //Check whether admin already exits or not
+    try {
+        const admin = await User.findOne({ role: 'admin' });
+
+        if (admin) {
+            return true;  // An admin user exists
+        } else {
+            return false; // No admin user found
+        }
+
+    } catch (err) {
+        console.error(err);
+        return false; // On error, assume no admin exists
+    }
+};
+
+
 
 // POST new user that is to signup a new user
 router.post('/signup', async (req, res) => {
     try {
+
+        if(await isAdminPresent(req.user.id))
+            return res.status(400).json({message: "User Admin already present!"})
+
         // Create a new user object(newUser) of User type document using Mongoose model
         const newUser = new User(req.body); //req.body: contains the data entered by the users
 
