@@ -87,4 +87,50 @@ router.delete('/:candidateID',jwtAuthMiddleware,  async (req, res) =>{ //added m
     }
 });
 
+
+// add voting counts
+router.post('/vote/:candidateID', jwtAuthMiddleware, async(req, res)=>{
+    // no admin can vote
+        // user can only vote once
+        candidateID = req.params.candidateID;
+        userID = req.user.id;
+
+    try{ 
+
+        //Find the Candidate document with specified candidateID
+        const candidate = await Candidate.findById(candidateID);
+        if(!Candidate){ //if candidate id doesn't match send this message below
+            return res.status(404).json({message: 'Candidate not found!!!'});
+        }
+        // Find voter by their id
+        const user = await User.findById(userId);
+        if(!User){ //if voter id doesn't match send this message below
+            return res.status(404).json({message: 'User not found!!!'});
+        }
+
+        if(user.isVoted){
+            res.status(400).json({message: 'You have already voted!'});
+        }
+
+        if(user.role == 'admin'){
+            res.status(403).json({message: 'admin is not allowed to vote!!!'});
+        }
+
+        // Update the Candidate document to record the vote
+        Candidate.votes.push({user: userID});
+        Candidate.voteCount++;
+        await candidate.save();
+
+        // Update the user document
+        user.isVoted =true
+        await user.save();
+
+        res.status(200).json({message: 'Vote recorded successfully!'});
+
+    }catch(err){
+        console.log(err);
+        res.status(500).json({error: 'Internal Server Error!'});
+    }
+});
+
 export default router;
