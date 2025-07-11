@@ -18,9 +18,9 @@ const checkAdminRole = async (userID) =>{
 router.post('/',jwtAuthMiddleware, async (req, res) => { //added middleware to all candidate routes so that all routes are protected, only Role="admin" can access
     try {
 
-        if(!checkAdminRole){
+        if(!(await checkAdminRole(req.user.id)))
             return res.status(403).json({message: "User role is not equal to 'admin'!"})
-        }
+
         // Create a new candidate object(newcandidate) of candidate type document using Mongoose model
         const newCandidate = new Candidate(req.body); //req.body: contains the data entered by the candidates
 
@@ -55,7 +55,7 @@ router.put('/:candidateID',jwtAuthMiddleware, async (req, res) =>{ //added middl
         }
 
         console.log('Candidate Data Updated Successfully!');
-        res.status.apply(200).json({response});
+        res.status(200).json({response});
         
     }catch(err){
         console.log(err);
@@ -79,7 +79,7 @@ router.delete('/:candidateID',jwtAuthMiddleware,  async (req, res) =>{ //added m
         }
 
         console.log('Candidate Data Deleted Successfully!');
-        res.status.apply(200).json({response});
+        res.status(200).json({response});
         
     }catch(err){
         console.log(err);
