@@ -20,28 +20,6 @@ router.post('/', async (req, res) => {
     }
 });
 
-// Login Route
-router.post('/login', async(req, res)=>{
-    try{
-        const {aadharCardNumber, password} = req.body;
-        const candidate = await candidate.findOne({aadharCardNumber: aadharCardNumber});
-
-        if(!candidate || !(await candidate.comparePassword(password))){
-            return res.status(401).json({error: 'Invalid aadharCardNumber or password!'});  
-        }
-
-        const payload ={
-            id: candidate.id
-        };
-        const token = generateToken(payload);
-
-        res.status(200).json({ token: token });
-
-    }catch(err){
-        console.log(err);
-        res.status(500).json({error: 'Internal Server Error!'});
-    }
-});
 
 // Profile Route this is a protected route (jwtAuthMiddleware) used
 router.get('/profile', jwtAuthMiddleware, async (req, res) =>{
