@@ -36,8 +36,13 @@ router.post('/', async (req, res) => {
 
 
 // Profile password changing route
-router.put('/:candidateID', jwtAuthMiddleware, async (req, res) =>{
+router.put('/:candidateID', async (req, res) =>{
     try{
+
+        if(!checkAdminRole){
+            return res.status(404).json({message: "User role is not equal to 'admin'!"})
+        }
+        
         const candidateId = req.candidate.id;
         const {currentPassword, newPassword} = req.body;
 
