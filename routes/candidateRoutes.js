@@ -36,7 +36,7 @@ router.post('/', async (req, res) => {
 
 
 // Profile password changing route
-router.put('/profile/password', jwtAuthMiddleware, async (req, res) =>{
+router.put('/:candidateID', jwtAuthMiddleware, async (req, res) =>{
     try{
         const candidateId = req.candidate.id;
         const {currentPassword, newPassword} = req.body;
