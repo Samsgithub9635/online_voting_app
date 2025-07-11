@@ -156,4 +156,16 @@ router.get('/vote/count', async (req, res)=>{
     }
 });
 
+// get all the candidate list
+router.get('/', async (req, res)=>{
+    try{
+        const allCandidates = await Candidate.find();
+        res.json(allCandidates);
+
+    }catch(err){
+        console.log(err);
+        res.status(500).json({error: 'Internal Server Error!'});
+    }
+});
+
 export default router;
