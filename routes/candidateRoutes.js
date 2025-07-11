@@ -39,25 +39,25 @@ router.post('/', async (req, res) => {
 router.put('/:candidateID', async (req, res) =>{
     try{
 
-        if(!checkAdminRole){
+        if(!checkAdminRole(req.user.id)){
             return res.status(404).json({message: "User role is not equal to 'admin'!"})
         }
-        
-        const candidateId = req.candidate.id;
-        const {currentPassword, newPassword} = req.body;
 
-        const candidate = await candidate.findById(candidateId);
+        const candidateID = req.params.candidateID; // Extract the id from the URL parameter
+        const updatedCandidateData = req.body;
 
-        if(!(await candidate.comparePassword(currentPassword))){
-            return res.status(401).json({error: 'Incorrect current password!!!'});
+        const response = await candidate.findByIdAndUpdate(candidateID, updatedCandidateData, {
+            new: true, //Return the updated document
+            runBalidators: true, // Run Mongoose validation
+        });
+
+        if(!response) {
+            return res.status(404).json({error: 'Candidate not found!!!'});
         }
 
-        candidate.password = newPassword;
-        await candidate.save();
-
-        console.log('Password Updated successfully');
-        res.status(200).json({message: "password updated"});
-
+        console.log('Candidate Data Updated Successfully!');
+        res.status.apply(200).json({response});
+        
     }catch(err){
         console.log(err);
         res.status(500).json({error: 'Internal Server Error!'});
