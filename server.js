@@ -4,7 +4,6 @@ import bodyParser from 'body-parser';
 import mongoose from './db.js'; // connects and exports mongoose.connection
 import userRoutes from './routes/userRoutes.js';
 import candidateRoutes from './routes/candidateRoutes.js';
-import { jwtAuthMiddleware } from './jwt.js';
 
 dotenv.config();
 const app = express();
@@ -19,7 +18,7 @@ const logRequest = (req, res, next) => {
 app.use(logRequest);
 
 app.use('/user', userRoutes);
-app.use('/candidate',jwtAuthMiddleware, candidateRoutes); //added middleware to all candidate routes so that all routes are protected, only Role="admin" can access
+app.use('/candidate', candidateRoutes); 
 
 // ✅ Wait for DB connection before starting server
 mongoose.once('open', () => {
