@@ -18,7 +18,7 @@ router.post('/', async (req, res) => {
     try {
 
         if(!checkAdminRole){
-            return res.status(404).json({message: "User role is not equal to 'admin'!"})
+            return res.status(403).json({message: "User role is not equal to 'admin'!"})
         }
         // Create a new candidate object(newcandidate) of candidate type document using Mongoose model
         const newCandidate = new candidate(req.body); //req.body: contains the data entered by the candidates
@@ -29,18 +29,16 @@ router.post('/', async (req, res) => {
 
         res.status(200).json({response: response});
     } catch (err) {
-        res.status(400).json({ message: err.message });
+        res.status(500).json({ message: err.message });
     }
 });
-
-
 
 // Profile password changing route
 router.put('/:candidateID', async (req, res) =>{
     try{
 
         if(!checkAdminRole(req.user.id)){
-            return res.status(404).json({message: "User role is not equal to 'admin'!"})
+            return res.status(403).json({message: "User role is not equal to 'admin'!"})
         }
 
         const candidateID = req.params.candidateID; // Extract the id from the URL parameter
@@ -56,6 +54,30 @@ router.put('/:candidateID', async (req, res) =>{
         }
 
         console.log('Candidate Data Updated Successfully!');
+        res.status.apply(200).json({response});
+        
+    }catch(err){
+        console.log(err);
+        res.status(500).json({error: 'Internal Server Error!'});
+    }
+});
+
+// Profile password changing route
+router.delete('/:candidateID', async (req, res) =>{
+    try{
+
+        if(!checkAdminRole(req.user.id)){
+            return res.status(403).json({message: "User role is not equal to 'admin'!"})
+        }
+
+        const candidateID = req.params.candidateID; // Extract the id from the URL parameter
+        const response = await candidate.findByIdAndDelete(candidateID);
+       
+        if(!response) {
+            return res.status(404).json({error: 'Candidate not found!!!'});
+        }
+
+        console.log('Candidate Data Deleted Successfully!');
         res.status.apply(200).json({response});
         
     }catch(err){
